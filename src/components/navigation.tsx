@@ -82,31 +82,27 @@ export default function Navigation() {
                     : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
+                {item.href === '/profile' && user ? (
+                  <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    {userProfile?.avatar_url || (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                ) : (
+                  <span className="text-lg">{item.icon}</span>
+                )}
                 <span className="font-medium">{item.label}</span>
               </Link>
             ))}
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {user ? (
-              <div className="flex items-center space-x-3">
-                {/* User Points (if available) */}
+              <>
+                {/* User Points */}
                 <div className="hidden sm:flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
                   <span className="text-sm mr-1">⭐</span>
                   <span className="font-bold text-sm">
                     {userProfile?.points || 0}
-                  </span>
-                </div>
-
-                {/* User Avatar/Name */}
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {userProfile?.avatar_url || (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()}
-                  </div>
-                  <span className="hidden sm:block text-gray-700 font-medium">
-                    {userProfile?.username || user.user_metadata?.full_name || user.email?.split('@')[0]}
                   </span>
                 </div>
 
@@ -117,7 +113,7 @@ export default function Navigation() {
                 >
                   🚪 Sign Out
                 </button>
-              </div>
+              </>
             ) : (
               <Link href="/auth">
                 <button className="btn-fun btn-success">
@@ -155,7 +151,13 @@ export default function Navigation() {
                       : 'text-gray-700 hover:bg-blue-50'
                   }`}
                 >
-                  <span className="text-xl">{item.icon}</span>
+                  {item.href === '/profile' && user ? (
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                      {userProfile?.avatar_url || (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()}
+                    </div>
+                  ) : (
+                    <span className="text-xl">{item.icon}</span>
+                  )}
                   <span className="font-medium">{item.label}</span>
                 </Link>
               ))}
@@ -163,18 +165,12 @@ export default function Navigation() {
               {user && (
                 <div className="px-4 py-3 border-t border-gray-200 mt-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {(user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {user.user_metadata?.full_name || user.email?.split('@')[0]}
-                        </div>
-                        <div className="text-sm text-gray-500 flex items-center">
-                          <span className="mr-1">⭐</span>
-                          {user.user_metadata?.points || 0} points
-                        </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+                        <span className="text-sm mr-1">⭐</span>
+                        <span className="font-bold text-sm">
+                          {userProfile?.points || 0}
+                        </span>
                       </div>
                     </div>
                     <button
