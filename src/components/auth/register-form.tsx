@@ -44,7 +44,7 @@ export function RegisterForm() {
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold text-center mb-6 text-primary-600">
-        Join Learning Adventure
+        Join The Playground
       </h2>
       
       {error && (

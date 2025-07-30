@@ -36,7 +36,7 @@ export default function AuthPage() {
         
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>
-            Welcome to Learning Adventure! A fun place to learn and grow.
+            Welcome to The Playground! A fun place to learn and grow.
           </p>
         </div>
       </div>

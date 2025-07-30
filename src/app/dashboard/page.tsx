@@ -39,6 +39,7 @@ interface UserBadge {
 interface UserProfile {
   id: string
   username: string
+  avatar_url: string
   points: number
 }
 
@@ -127,8 +128,20 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Dashboard</h1>
-          <p className="text-lg text-gray-600">Track your learning progress and achievements</p>
+          <div className="flex items-center justify-center mb-4">
+            <div className="text-6xl mr-4">{userProfile?.avatar_url || '🧑‍🎓'}</div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Welcome back, {userProfile?.username || 'Student'}!
+              </h1>
+              <p className="text-lg text-gray-600">Track your learning progress and achievements</p>
+              <Link href="/profile">
+                <button className="btn-fun btn-secondary mt-2 text-sm">
+                  ⚙️ Edit Profile
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Stats Overview */}

@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 import { usePathname } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 
 export default function Navigation() {
   const { user, signOut } = useAuth()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [userProfile, setUserProfile] = useState<{username: string, avatar_url: string, points: number} | null>(null)
 
   const navItems = [
     { href: '/', label: 'Home', icon: '🏠' },
@@ -16,7 +18,30 @@ export default function Navigation() {
     { href: '/research', label: 'Research', icon: '🔬' },
     { href: '/calculator', label: 'Calculator', icon: '🧮' },
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { href: '/profile', label: 'Profile', icon: '👤' },
   ]
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return
+
+      try {
+        const { data: profileData } = await supabase
+          .from('users')
+          .select('username, avatar_url, points')
+          .eq('id', user.id)
+          .single()
+
+        if (profileData) {
+          setUserProfile(profileData)
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      }
+    }
+
+    fetchUserProfile()
+  }, [user])
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -41,7 +66,7 @@ export default function Navigation() {
           <Link href="/" className="flex items-center space-x-2 group">
             <div className="text-2xl group-hover:scale-110 transition-transform">🎓</div>
             <span className="text-xl font-bold gradient-text hidden sm:block">
-              Learning Adventure
+              The Playground
             </span>
           </Link>
 
@@ -71,17 +96,17 @@ export default function Navigation() {
                 <div className="hidden sm:flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
                   <span className="text-sm mr-1">⭐</span>
                   <span className="font-bold text-sm">
-                    {user.user_metadata?.points || 0}
+                    {userProfile?.points || 0}
                   </span>
                 </div>
 
                 {/* User Avatar/Name */}
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {(user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()}
+                    {userProfile?.avatar_url || (user.user_metadata?.full_name || user.email || 'U')[0].toUpperCase()}
                   </div>
                   <span className="hidden sm:block text-gray-700 font-medium">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    {userProfile?.username || user.user_metadata?.full_name || user.email?.split('@')[0]}
                   </span>
                 </div>
 

@@ -85,7 +85,7 @@ export default function HomePage() {
           <div className="text-center">
             <div className="mb-8">
               <h1 className="text-5xl md:text-7xl font-bold gradient-text-light mb-4 star-decoration">
-                🎓 Learning Adventure 🚀
+                🎓 The Playground 🚀
               </h1>
               <p className="text-xl md:text-2xl text-white mb-6">
                 Where curiosity meets discovery!
@@ -270,7 +270,7 @@ export default function HomePage() {
       <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center text-white">
           <p className="text-lg mb-2">
-            🎓 Learning Adventure - Where Education Meets Fun! 🎮
+            🎓 The Playground - Where Education Meets Fun! 🎮
           </p>
           <p className="text-sm opacity-75">
             Made with ❤️ for curious young minds everywhere
