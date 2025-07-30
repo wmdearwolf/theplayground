@@ -3,16 +3,24 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     appDir: true,
-    outputFileTracingRoot: undefined,
   },
-  // Disable telemetry
-  telemetry: false,
   // Enable SWC minification
   swcMinify: true,
   // Optimize images
   images: {
     domains: [],
     unoptimized: false,
+  },
+  // Webpack configuration to handle optional dependencies
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        bufferutil: false,
+        'utf-8-validate': false,
+      }
+    }
+    return config
   },
 }
 

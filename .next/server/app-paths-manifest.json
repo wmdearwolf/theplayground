@@ -1,8 +1,12 @@
 {
   "/page": "app/page.js",
+  "/auth/page": "app/auth/page.js",
+  "/calculator/page": "app/calculator/page.js",
   "/dashboard/page": "app/dashboard/page.js",
+  "/profile/page": "app/profile/page.js",
   "/quizzes/page": "app/quizzes/page.js",
   "/research/page": "app/research/page.js",
-  "/calculator/page": "app/calculator/page.js",
-  "/profile/page": "app/profile/page.js"
+  "/api/health/route": "app/api/health/route.js",
+  "/quizzes/[id]/page": "app/quizzes/[id]/page.js",
+  "/research/[id]/page": "app/research/[id]/page.js"
 }
