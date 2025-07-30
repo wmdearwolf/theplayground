@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { checkAndAwardBadges, Badge } from '@/lib/badges'
 
 interface Question {
   id: string
@@ -47,6 +48,7 @@ export default function QuizPage() {
   const [score, setScore] = useState(0)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [newBadges, setNewBadges] = useState<Badge[]>([])
 
   // Comprehensive quiz data with technical topics
   const sampleQuizzes: Record<string, Quiz> = {
@@ -1499,6 +1501,9 @@ export default function QuizPage() {
       if (pointsError) {
         console.error('Error updating points:', pointsError)
       }
+      // Check for new badges
+      const earnedBadges = await checkAndAwardBadges(user.id)
+      setNewBadges(earnedBadges)
     } catch (error) {
       console.error('Error saving quiz results:', error)
     }
@@ -1602,6 +1607,32 @@ export default function QuizPage() {
               🏆 You earned {Math.round((score / 100) * quiz.points)} points!
             </p>
           </div>
+          
+          {/* New Badges Notification */}
+          {newBadges.length > 0 && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border-2 border-yellow-200">
+              <div className="text-center">
+                <div className="text-4xl mb-2">🎖️</div>
+                <h3 className="text-xl font-bold text-yellow-800 mb-2">
+                  New Badge{newBadges.length > 1 ? 's' : ''} Earned!
+                </h3>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {newBadges.map((badge) => (
+                    <div key={badge.id} className="text-center">
+                      <div
+                        className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-1"
+                        style={{ backgroundColor: badge.color + '20' }}
+                      >
+                        <span className="text-2xl">{badge.icon}</span>
+                      </div>
+                      <p className="text-sm font-medium text-yellow-800">{badge.name}</p>
+                      <p className="text-xs text-yellow-600">{badge.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
           
           <div className="flex flex-col gap-3">
             <button className="btn-fun btn-secondary" onClick={restartQuiz}>

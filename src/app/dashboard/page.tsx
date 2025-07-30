@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { getUserBadges } from '@/lib/badges'
 
 interface UserProgress {
   id: string
@@ -82,19 +83,13 @@ export default function DashboardPage() {
         setUserProgress(progressData as UserProgress[])
       }
 
-      // Fetch user badges
-      const { data: badgesData } = await supabase
-        .from('user_badges')
-        .select(`
-          *,
-          badge:badges(*)
-        `)
-        .eq('user_id', user.id)
-        .order('earned_at', { ascending: false })
-      
-      if (badgesData) {
-        setUserBadges(badgesData as UserBadge[])
-      }
+      // Fetch user badges using the new function
+      const badges = await getUserBadges(user.id)
+      setUserBadges(badges.map(badge => ({
+        id: badge.id,
+        badge: badge,
+        earned_at: new Date().toISOString()
+      })))
 
       setLoading(false)
     }

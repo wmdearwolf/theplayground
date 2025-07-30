@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { checkAndAwardBadges } from '@/lib/badges'
 
 interface ArxivPaper {
   id: string
@@ -41,7 +42,6 @@ export default function ResearchPage() {
   const [arxivPapers, setArxivPapers] = useState<ArxivPaper[]>([])
   const [savedItems, setSavedItems] = useState<SavedResearch[]>([])
   const [filteredItems, setFilteredItems] = useState<ResearchItem[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
   const [arxivSearchTerm, setArxivSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [loading, setLoading] = useState(true)
@@ -1122,23 +1122,15 @@ export default function ResearchPage() {
   }, [user])
 
   useEffect(() => {
-    // Filter items based on search term and category
+    // Filter items based on category only
     let result = researchItems
 
     if (selectedCategory !== 'all') {
       result = result.filter(item => item.category === selectedCategory)
     }
 
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      result = result.filter(item => 
-        item.title.toLowerCase().includes(term) || 
-        item.description.toLowerCase().includes(term)
-      )
-    }
-
     setFilteredItems(result)
-  }, [researchItems, searchTerm, selectedCategory])
+  }, [researchItems, selectedCategory])
 
   const searchArxiv = async (query: string, category?: string) => {
     setArxivLoading(true)
@@ -1287,6 +1279,11 @@ export default function ResearchPage() {
       }
     }
 
+    // Check for new badges when saving research
+    if (!isSaved) {
+      await checkAndAwardBadges(user.id)
+    }
+
     setSaving(prev => ({ ...prev, [itemId]: false }))
   }
 
@@ -1329,28 +1326,17 @@ export default function ResearchPage() {
           </div>
 
           {activeTab === 'curated' ? (
-            /* Curated Content Search */
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="🔍 Search for topics..."
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    className={`btn-fun ${selectedCategory === category.id ? 'btn-success' : 'btn-secondary'}`}
-                    onClick={() => setSelectedCategory(category.id)}
-                  >
-                    {category.emoji} {category.name}
-                  </button>
-                ))}
-              </div>
+            /* Curated Content Categories */
+            <div className="flex flex-wrap justify-center gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  className={`btn-fun ${selectedCategory === category.id ? 'btn-success' : 'btn-secondary'}`}
+                  onClick={() => setSelectedCategory(category.id)}
+                >
+                  {category.emoji} {category.name}
+                </button>
+              ))}
             </div>
           ) : (
             /* arXiv Search */
