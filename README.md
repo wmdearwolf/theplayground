@@ -101,19 +101,26 @@ npm run dev
 
 ### 🔧 **Environment Setup**
 
-Create a `.env.local` file in your project root:
+1. **Copy the example file:**
+   ```bash
+   cp .env.example .env.local
+   ```
 
-```env
-# 🔑 Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+2. **Edit `.env.local` with your values:**
+   ```env
+   # 🔑 Supabase Configuration
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   
+   # 🌐 Application Configuration
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   NODE_ENV=development
+   ```
 
-# 🔐 Authentication (Optional)
-NEXTAUTH_SECRET=your_super_secret_key
-NEXTAUTH_URL=http://localhost:3000
-```
-
-> 💡 **Tip**: Check out our [detailed setup guide](SUPABASE_SETUP.md) for step-by-step instructions!
+> 💡 **Tips**:
+> - Check out our [detailed setup guide](SUPABASE_SETUP.md) for step-by-step instructions!
+> - For production deployment, see [Coolify deployment guide](COOLIFY_DEPLOYMENT.md)
+> - Having issues? Check our [troubleshooting guide](COOLIFY_TROUBLESHOOTING.md)
 
 ---
 
@@ -301,9 +308,9 @@ We'd love your help making The Playground even more amazing! 🌟
 | 📖 Guide | 📝 Description | 🎯 Audience |
 |----------|----------------|-------------|
 | [🚀 Deployment Guide](COOLIFY_DEPLOYMENT.md) | Complete Coolify deployment instructions | DevOps |
+| [🚨 Troubleshooting](COOLIFY_TROUBLESHOOTING.md) | Fix common deployment issues | DevOps |
 | [🧪 Testing Guide](DEPLOYMENT_AND_TESTING_GUIDE.md) | Comprehensive testing and deployment | Developers |
 | [🗄️ Database Setup](SUPABASE_SETUP.md) | Supabase configuration and schema | Backend |
-| [👨‍💻 Developer Docs](DEVELOPER_DOCUMENTATION.md) | API reference and architecture | Developers |
 | [📋 Content Management](CONTENT_MANAGEMENT_SETUP.sql) | Safe content deployment system | Content Managers |
 
 </div>

@@ -22,15 +22,27 @@ This guide will help you deploy The Playground educational app using Coolify, a 
    git push origin main
    ```
 
-2. **Environment Variables**
-   Create a `.env.production` file with your production environment variables:
+2. **Environment Variables Setup**
+   **IMPORTANT**: Do NOT create a `.env.production` file in your repository. Instead, set these environment variables directly in Coolify's dashboard. Use the `.env.production.example` file as a reference for the variables you need to set.
+
+   Required environment variables for Coolify:
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-   NEXTAUTH_SECRET=your_nextauth_secret_key
-   NEXTAUTH_URL=https://your-domain.com
+   # Required Supabase Configuration
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   
+   # Required Application Configuration
+   NEXT_PUBLIC_APP_URL=https://your-domain.com
    NODE_ENV=production
+   
+   # Required for Authentication
+   NEXTAUTH_SECRET=your_super_secret_key_minimum_32_characters
+   NEXTAUTH_URL=https://your-domain.com
+   
+   # Next.js Configuration
+   NEXT_TELEMETRY_DISABLED=1
+   PORT=3000
+   HOSTNAME=0.0.0.0
    ```
 
 ## Step 2: Coolify Configuration
@@ -57,24 +69,35 @@ This guide will help you deploy The Playground educational app using Coolify, a 
    - **Internal Port**: `3000`
    - **External Port**: `80` or `443` (for HTTPS)
 
-### 2.3 Environment Variables
+### 2.3 Environment Variables in Coolify
 
-Add these environment variables in Coolify:
+**CRITICAL**: Set these environment variables in Coolify's dashboard under your application settings:
 
 ```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+# 🔑 Supabase Configuration (REQUIRED)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
-# Next.js Configuration
-NEXTAUTH_SECRET=your_super_secret_key_here
-NEXTAUTH_URL=https://your-domain.com
+# 🌐 Application Configuration (REQUIRED)
+NEXT_PUBLIC_APP_URL=https://your-domain.com
 NODE_ENV=production
 
-# Optional: Disable telemetry
+# 🔐 Authentication (REQUIRED)
+NEXTAUTH_SECRET=your_super_secret_key_minimum_32_characters
+NEXTAUTH_URL=https://your-domain.com
+
+# 🚀 Next.js Configuration
 NEXT_TELEMETRY_DISABLED=1
+PORT=3000
+HOSTNAME=0.0.0.0
 ```
+
+**How to set environment variables in Coolify:**
+1. Go to your application in Coolify dashboard
+2. Navigate to "Environment Variables" tab
+3. Add each variable one by one
+4. Make sure to save after adding all variables
+5. Redeploy your application after setting variables
 
 ### 2.4 Domain Configuration
 
@@ -217,38 +240,104 @@ export async function GET() {
 
 ## Troubleshooting
 
-### Common Issues
+### Common Issues and Solutions
 
 1. **Build Failures**
-   - Check Node.js version compatibility
-   - Verify all dependencies are installed
-   - Review build logs
+   ```bash
+   # Check if package.json and package-lock.json are in sync
+   npm ci
+   
+   # Verify Node.js version (should be 18+)
+   node --version
+   
+   # Check build logs in Coolify dashboard
+   ```
 
-2. **Database Connection Issues**
-   - Verify Supabase URL and keys
-   - Check network connectivity
-   - Review RLS policies
+2. **Environment Variables Not Working**
+   - **Problem**: App can't connect to Supabase or shows undefined variables
+   - **Solution**:
+     ```bash
+     # In Coolify dashboard, verify these variables are set:
+     NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key_here
+     NODE_ENV=production
+     ```
+   - **Important**: Variables starting with `NEXT_PUBLIC_` are exposed to the browser
+   - **Redeploy** after setting environment variables
 
-3. **Environment Variables**
-   - Ensure all required variables are set
-   - Check for typos in variable names
-   - Verify variable values
+3. **Database Connection Issues**
+   - Verify Supabase URL format: `https://project-id.supabase.co`
+   - Check if Supabase project is active and not paused
+   - Verify RLS policies allow public access where needed
+   - Test connection: Visit `/api/health` endpoint
+
+4. **Docker Build Issues**
+   ```bash
+   # Test build locally first
+   docker build -t playground-test .
+   docker run -p 3000:3000 playground-test
+   ```
+
+5. **Health Check Failures**
+   - Ensure `/api/health` endpoint exists and works
+   - Check if port 3000 is properly exposed
+   - Verify container starts successfully
 
 ### Debug Commands
 
 ```bash
-# Check container logs
-docker logs container_name
+# Check Coolify application logs
+# (Available in Coolify dashboard under "Logs" tab)
 
-# Access container shell
-docker exec -it container_name /bin/sh
+# Test locally with production build
+npm run build
+npm start
 
-# Check environment variables
-docker exec container_name env
+# Check environment variables in container
+docker exec -it container_name env | grep NEXT_PUBLIC
 
-# Test database connection
-docker exec container_name node -e "console.log(process.env.NEXT_PUBLIC_SUPABASE_URL)"
+# Test health endpoint
+curl http://localhost:3000/api/health
+
+# Check if Supabase connection works
+curl -X GET "https://your-project-id.supabase.co/rest/v1/" \
+  -H "apikey: your_anon_key" \
+  -H "Authorization: Bearer your_anon_key"
 ```
+
+### Environment Variable Checklist
+
+Before deploying, ensure these are set in Coolify:
+
+- [ ] `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon key
+- [ ] `NEXT_PUBLIC_APP_URL` - Your domain (https://your-domain.com)
+- [ ] `NODE_ENV=production` - Set to production
+- [ ] `NEXTAUTH_SECRET` - Random 32+ character string
+- [ ] `NEXTAUTH_URL` - Same as NEXT_PUBLIC_APP_URL
+- [ ] `NEXT_TELEMETRY_DISABLED=1` - Disable telemetry
+- [ ] `PORT=3000` - Application port
+- [ ] `HOSTNAME=0.0.0.0` - Bind to all interfaces
+
+### Quick Fix Steps
+
+1. **If deployment fails:**
+   - Check Coolify build logs
+   - Verify all environment variables are set
+   - Ensure Dockerfile is in root directory
+   - Try rebuilding from scratch
+
+2. **If app loads but features don't work:**
+   - Check browser console for errors
+   - Verify Supabase connection at `/api/health`
+   - Check if environment variables are properly set
+   - Ensure database tables exist and RLS is configured
+
+3. **If getting "Internal Server Error":**
+   - Check application logs in Coolify
+   - Verify database connection
+   - Check if all required environment variables are set
+   - Test health endpoint
 
 ## Security Considerations
 
